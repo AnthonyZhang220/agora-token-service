@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -77,7 +78,13 @@ func NewService() *Service {
 		appCertificate: appCertEnv,
 	}
 
+	// Enable CORS middleware
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type"}
+
 	api := gin.Default()
+	api.Use(cors.New(corsConfig))
 
 	api.GET("rtc/:channelName/:role/:tokenType/:rtcuid/", s.getRtcToken)
 	api.GET("rtm/:rtmuid/", s.getRtmToken)
